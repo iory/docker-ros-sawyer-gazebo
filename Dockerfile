@@ -4,6 +4,13 @@ MAINTAINER iory ab.ioryz@gmail.com
 
 RUN apt update && \
 DEBIAN_FRONTEND=noninteractive apt install -y \
+wget && \
+rm -rf /var/lib/apt/lists/*
+RUN sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-stable.list'
+RUN wget http://packages.osrfoundation.org/gazebo.key -O - | apt-key add -
+
+RUN apt update && \
+DEBIAN_FRONTEND=noninteractive apt install -y \
 python-catkin-tools \
 python-rosinstall \
 python-wstool \
@@ -26,21 +33,27 @@ RUN useradd -G sudo -u 1000 --create-home ros
 ENV HOME /home/ros
 WORKDIR /home/ros
 
-RUN mkdir -p ~/ros_ws/src && \
-    cd ~/ros_ws/src && \
+RUN mkdir -p ${HOME}/ros_ws/src && \
+    cd ${HOME}/ros_ws/src && \
     git clone https://github.com/RethinkRobotics/sawyer_simulator.git && \
     wstool init . && \
     wstool merge sawyer_simulator/sawyer_simulator.rosinstall && \
-    wstool update && \
-    rosdep install -r -y --from-paths src --ignore-src .
+    wstool update
+
+RUN cd ${HOME}/ros_ws && \
+    rosdep update && \
+    apt update && \
+    rosdep install --from-paths --ignore-src -y -r src
 
 RUN mv /bin/sh /bin/sh_tmp && ln -s /bin/bash /bin/sh
-RUN source /opt/ros/${ROS_DISTRO}/setup.bash; cd ~/ros_ws; catkin build
+RUN source /opt/ros/${ROS_DISTRO}/setup.bash; cd ${HOME}/ros_ws; catkin build
 RUN rm /bin/sh && mv /bin/sh_tmp /bin/sh
-RUN touch ~/.bashrc && \
-    echo "source $HOME/ros_ws/src/devel/setup.bash\n" >> ~/.bashrc && \
-    echo "rossetip\n" >> /root/.bashrc && \
+RUN touch ${HOME}/.bashrc && \
+    echo "source $HOME/ros_ws/devel/setup.bash\n" >> ${HOME}/.bashrc && \
+    echo "rossetip\n" >> ${HOME}/.bashrc && \
     echo "rossetmaster localhost"
+
+RUN chown -R ros:ros ${HOME}
 
 COPY ./ros_entrypoint.sh /
 
