@@ -30,8 +30,8 @@ ros-${ROS_DISTRO}-sns-ik-lib && \
 rm -rf /var/lib/apt/lists/*
 
 RUN useradd -G sudo -u 1000 --create-home ros
-ENV HOME /home/ros
-WORKDIR /home/ros
+ENV HOME /
+WORKDIR /
 
 RUN mkdir -p ${HOME}/ros_ws/src && \
     cd ${HOME}/ros_ws/src && \
@@ -52,8 +52,6 @@ RUN touch ${HOME}/.bashrc && \
     echo "source $HOME/ros_ws/devel/setup.bash\n" >> ${HOME}/.bashrc && \
     echo "rossetip\n" >> ${HOME}/.bashrc && \
     echo "rossetmaster localhost"
-
-RUN chown -R ros:ros ${HOME}
 
 COPY ./ros_entrypoint.sh /
 
