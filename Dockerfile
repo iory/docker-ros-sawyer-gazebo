@@ -4,13 +4,6 @@ MAINTAINER iory ab.ioryz@gmail.com
 
 RUN apt update && \
 DEBIAN_FRONTEND=noninteractive apt install -y \
-wget && \
-rm -rf /var/lib/apt/lists/*
-RUN sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-stable.list'
-RUN wget http://packages.osrfoundation.org/gazebo.key -O - | apt-key add -
-
-RUN apt update && \
-DEBIAN_FRONTEND=noninteractive apt install -y \
 python-catkin-tools \
 python-rosinstall \
 python-wstool \
