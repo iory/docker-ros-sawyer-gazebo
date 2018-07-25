@@ -38,7 +38,7 @@ RUN mv /bin/sh /bin/sh_tmp && ln -s /bin/bash /bin/sh
 RUN source /opt/ros/${ROS_DISTRO}/setup.bash; cd /ros_ws; catkin build
 RUN rm /bin/sh && mv /bin/sh_tmp /bin/sh
 RUN touch /root/.bashrc && \
-    echo "source /catkin_ws/devel/setup.bash\n" >> /root/.bashrc && \
+    echo "source /ros_ws/devel/setup.bash\n" >> /root/.bashrc && \
     echo "rossetip\n" >> /root/.bashrc && \
     echo "rossetmaster localhost"
 
